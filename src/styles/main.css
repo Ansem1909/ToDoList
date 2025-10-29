@@ -3,3 +3,7 @@
 @import './helpers/variables.css';
 @import './helpers/globals.css';
 
+@import 'blocks/button.css';
+@import 'blocks/field.css';
+@import 'blocks/todo.css';
+@import 'blocks/todo-item.css';
