@@ -36,8 +36,22 @@
   font-weight: 700;
 }
 
-@media(max-width: 480px) {
+@media(max-width: 520px) {
   .todo__info {
+    font-size: 12px;
+  }
+
+  .todo__filter-buttons--main {
+    display: none;
+  }
+}
+
+.todo__filter-buttons--mobile {
+  display: none;
+
+  @media(max-width: 520px) {
+    display: flex;
+    justify-content: center;
     font-size: 12px;
   }
 }
@@ -53,6 +67,11 @@
   &:hover {
     background-color: var(--color-orange-1);
     color: var(--color-white);
+  }
+
+  &:not(.is-visible) {
+    opacity: 0;
+    visibility: hidden;
   }
 }
 
@@ -70,10 +89,10 @@
     color: var(--color-orange-1);
   }
 
-  /*&:not(.is-visible) {*/
-  /*  opacity: 0;*/
-  /*  visibility: hidden;*/
-  /*}*/
+  &:not(.is-visible) {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 .todo__list,

@@ -1,7 +1,9 @@
 .button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   height: var(--input-height);
+  min-width: 53px;
   padding: 12px;
   color: var(--color-white);
   background-color: var(--color-green-1);
