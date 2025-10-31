@@ -11,12 +11,14 @@
   border-radius: var(--border-radius);
 
   &:hover {
-    color: var(--color-orange-1);
-    border: 2px solid var(--color-orange-1);
+    color: var(--color-green-2);
+    border: 2px solid var(--color-green-2);
     background-color: transparent;
   }
 
   &:active {
+    color: var(--color-gray-2);
+    border: 2px solid var(--color-gray-2);
     scale: 1.05;
   }
 }

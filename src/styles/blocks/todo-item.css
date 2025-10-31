@@ -8,7 +8,6 @@
   transition-duration: var(--transition-duration);
 
   &:hover {
-    background-color: var(--color-gray-3);
     border-color: var(--color-orange-2);
   }
 
@@ -36,11 +35,30 @@
   margin: 0;
   border: 2px solid var(--color-black);
   border-radius: 4px;
+  transition-duration: var(--transition-duration);
+
+  &:hover {
+    border-color: var(--color-orange-1);
+  }
+
+  &:active {
+    border-color: var(--color-gray-2);
+  }
 
   &:checked {
     background-color: var(--color-green-1);
     border-color: var(--color-green-1);
     color: var(--color-green-1);
+
+    &:hover {
+      background-color: var(--color-green-2);
+      border-color: var(--color-green-2);
+    }
+
+    &:active {
+      background-color: var(--color-gray-2);
+      border-color: var(--color-gray-1);
+    }
 
     & + .todo-item__label {
       color: var(--color-gray-1);
@@ -84,6 +102,7 @@
   background-color: transparent;
   border: none;
   border-radius: inherit;
+  transition-duration: var(--transition-duration);
 
   &:hover {
     color: var(--color-white);
