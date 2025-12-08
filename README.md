@@ -3,7 +3,7 @@
 
 ## 🚀 Деплой
 
-Проект размещен на Vercel:
+Проект размещен на Vercel: to-do-list-eight-rouge-33.vercel.app
 
 ## 🛠 Технологии
 
