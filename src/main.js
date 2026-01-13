@@ -69,7 +69,10 @@ class Todo {
   render() {
     this.totalTasksElement.textContent = this.state.items.length;
 
+    const hasTasks = this.state.items.length > 0;
+
     this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);
+    this.checkAllButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
 
     this.filterButtonsElements.forEach(element => {
       element.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);

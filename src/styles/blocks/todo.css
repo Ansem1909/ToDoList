@@ -116,6 +116,11 @@
   }
 }
 
+.button__toggle-all:not(.is-visible) {
+  display: none;
+  transition-duration: var(--transition-duration);
+}
+
 .todo__list,
 .todo__empty-message {
   &:empty {
