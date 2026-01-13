@@ -3,8 +3,6 @@ class Todo {
     root: '[data-js-todo]',
     newTaskForm: '[data-js-todo-new-task-form]',
     newTaskInput: '[data-js-todo-new-task-input]',
-    searchTaskForm: '[data-js-todo-search-task-form]',
-    searchTaskInput: '[data-js-todo-search-task-input]',
     checkAllButton: '[data-js-todo-check-all-button]',
     totalTasks: '[data-js-todo-total-tasks]',
     filterButtons: '[data-js-todo-filter-buttons]',
@@ -29,8 +27,6 @@ class Todo {
     this.rootElement = document.querySelector(this.selectors.root);
     this.newTaskFormElement = this.rootElement.querySelector(this.selectors.newTaskForm);
     this.newTaskInputElement = this.rootElement.querySelector(this.selectors.newTaskInput);
-    this.searchTaskFormElement = this.rootElement.querySelector(this.selectors.searchTaskForm);
-    this.searchTaskInputElement = this.rootElement.querySelector(this.selectors.searchTaskInput);
     this.checkAllButtonElement = this.rootElement.querySelector(this.selectors.checkAllButton);
     this.totalTasksElement = this.rootElement.querySelector(this.selectors.totalTasks);
     this.filterButtonsElements = this.rootElement.querySelectorAll(this.selectors.filterButtons);
@@ -41,7 +37,6 @@ class Todo {
     this.state = {
       items: this.getItemsInfoFromLocalStorage(),
       filteredItems: null,
-      searchQuery: '',
       currentFilter: 'all',
     }
 
@@ -156,18 +151,6 @@ class Todo {
     this.render();
   }
 
-  filter() {
-    const queryFormatted = this.state.searchQuery.toLowerCase();
-
-    this.state.filteredItems = this.state.items.filter(({ title }) => {
-      const titleFormatted = title.toLowerCase();
-
-      return titleFormatted.includes(queryFormatted);
-    })
-
-    this.render();
-  }
-
   setFilterFromFilterPanel(filterType) {
     this.state.currentFilter = filterType;
 
@@ -197,16 +180,6 @@ class Todo {
     this.render();
   }
 
-  resetFilter() {
-    this.state.filteredItems = null;
-    this.state.searchQuery = '';
-    this.state.currentFilter = 'all';
-
-    this.setFilterFromFilterPanel('all');
-
-    this.render();
-  }
-
   onNewTaskFormSubmit = (event) => {
     event.preventDefault();
 
@@ -214,24 +187,8 @@ class Todo {
 
     if (newTodoItemTitle.trim().length > 0) {
       this.addItem(newTodoItemTitle);
-      this.resetFilter();
       this.newTaskInputElement.value = '';
       this.newTaskInputElement.focus();
-    }
-  }
-
-  onSearchTaskFormSubmit = (event) => {
-    event.preventDefault();
-  }
-
-  onSearchTaskInputChange = ({ target }) => {
-    const value = target.value.trim();
-
-    if (value.length > 0) {
-      this.state.searchQuery = value;
-      this.filter();
-    } else {
-      this.resetFilter();
     }
   }
 
@@ -241,7 +198,7 @@ class Todo {
     if (isConfirmed) {
       this.state.items = this.state.items.filter((item) => !item.isChecked);
 
-      this.resetFilter();
+      this.setFilterFromFilterPanel(this.state.currentFilter);
       this.saveItemsToLocalStorage();
       this.render();
     }
@@ -276,7 +233,7 @@ class Todo {
     }
   }
 
-  onSearchButtonClick = (event) => {
+  onCheckAllButtonClick = (event) => {
     event.preventDefault();
 
     if (this.state.items.length === 0) {
@@ -297,9 +254,7 @@ class Todo {
 
   bindEvents() {
     this.newTaskFormElement.addEventListener('submit', this.onNewTaskFormSubmit);
-    this.searchTaskFormElement.addEventListener('submit', this.onSearchTaskFormSubmit);
-    this.searchTaskInputElement.addEventListener('input', this.onSearchTaskInputChange);
-    this.checkAllButtonElement.addEventListener('click', this.onSearchButtonClick);
+    this.checkAllButtonElement.addEventListener('click', this.onCheckAllButtonClick);
     this.deleteButtonElement.addEventListener('click', this.onDeleteButtonClick);
     this.listElement.addEventListener('click', this.onClick);
     this.listElement.addEventListener('change', this.onChange);
