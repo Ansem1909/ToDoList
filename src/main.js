@@ -12,12 +12,13 @@ class Todo {
     itemCheckbox: '[data-js-todo-item-checkbox]',
     itemLabel: '[data-js-todo-item-label]',
     itemDeleteButton: '[data-js-todo-item-delete-button]',
-    emptyMessage: '[data-js-todo-empty-message]',
+    itemInput: '[data-js-todo-item-input]',
   }
 
   stateClasses = {
     isVisible: 'is-visible',
     isDisappearing: 'is-disappearing',
+    isEditing: 'is-editing',
   }
 
   localStorageKey = 'todo-items';
@@ -32,13 +33,14 @@ class Todo {
     this.filterButtonsElements = this.rootElement.querySelectorAll(this.selectors.filterButtons);
     this.deleteButtonElement = this.rootElement.querySelector(this.selectors.deleteButton);
     this.listElement = this.rootElement.querySelector(this.selectors.list);
-    this.emptyMessageElement = this.rootElement.querySelector(this.selectors.emptyMessage);
 
     this.state = {
       items: this.getItemsInfoFromLocalStorage(),
       filteredItems: null,
       currentFilter: 'all',
     }
+
+    this.editingItemId = null;
 
     this.render();
     this.bindEvents()
@@ -80,41 +82,59 @@ class Todo {
 
     const items = this.state.filteredItems ?? this.state.items;
 
-    this.listElement.innerHTML = items.map(({ id, title, isChecked }) => `
-      <li class="todo__item todo-item" data-js-todo-item>
-        <input
-            class="todo-item__checkbox"
-            id="${id}"
-            type="checkbox"
-            ${isChecked ? 'checked' : ''}
-            data-js-todo-item-checkbox
-        />
-        <label
-            class="todo-item__label"
-            for="${id}"
-            data-js-todo-item-label
-        >
-          ${title}
-        </label>
-        <button
-            class="todo-item__delete-button"
-            data-js-todo-item-delete-button
-            aria-label="Delete"
-            title="Delete"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 5L5 15M5 5L15 15" stroke="#757575" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </li>
-    `).join(' ');
+    this.listElement.innerHTML = items.map(({ id, title, isChecked }) => {
+      const isEditing = this.editingItemId === id;
+      return `
+    <li class="todo__item todo-item ${isEditing ? this.stateClasses.isEditing : ''}" 
+        data-js-todo-item
+        data-item-id="${id}">
+      <input
+          class="todo-item__checkbox"
+          id="${id}"
+          type="checkbox"
+          ${isChecked ? 'checked' : ''}
+          ${isEditing ? 'disabled' : ''}
+          data-js-todo-item-checkbox
+      />
+      <label
+          class="todo-item__label"
+          for="${id}"
+          data-js-todo-item-label
+      >
+        ${title}
+      </label>
+      <input
+          class="todo-item__input"
+          type="text"
+          value="${title}"
+          data-js-todo-item-input
+      />
+      <button
+          class="todo-item__delete-button"
+          data-js-todo-item-delete-button
+          aria-label="Delete"
+          title="Delete"
+          ${isEditing ? 'disabled' : ''}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 5L5 15M5 5L15 15" stroke="#757575" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </li>
+    `;
+    }).join(' ');
 
-    const isEmptyFilteredItems = this.state.filteredItems?.length === 0;
-    const isEmptyItems = this.state.items.length === 0;
-
-    this.emptyMessageElement.textContent = isEmptyFilteredItems ? 'Tasks not found'
-      : isEmptyItems ? 'There are no tasks yet'
-        : '';
+    if (this.editingItemId) {
+      setTimeout(() => {
+        const input = this.listElement.querySelector(
+          `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
+        );
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 0);
+    }
   }
 
   addItem(title) {
@@ -134,6 +154,47 @@ class Todo {
 
     this.setFilterFromFilterPanel(this.state.currentFilter);
     this.saveItemsToLocalStorage();
+    this.render();
+  }
+
+  startEditing(id) {
+    this.editingItemId = id;
+    this.render();
+
+    setTimeout(() => {
+      const input = this.listElement.querySelector(
+        `[data-item-id="${id}"] [data-js-todo-item-input]`
+      );
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 0);
+  }
+
+  saveEditing(id, newTitle) {
+    if (newTitle.trim() === '') {
+      this.deleteItem(id);
+    } else {
+      this.state.items = this.state.items.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            title: newTitle.trim(),
+          };
+        }
+        return item;
+      });
+
+      this.saveItemsToLocalStorage();
+    }
+
+    this.editingItemId = null;
+    this.render();
+  }
+
+  cancelEditing() {
+    this.editingItemId = null;
     this.render();
   }
 
@@ -216,7 +277,48 @@ class Todo {
 
       setTimeout(() => {
         this.deleteItem(itemCheckboxElement.id);
-      }, 400)
+      }, 400);
+    }
+  }
+
+  onDoubleClick = ({ target }) => {
+    const itemElement = target.closest('[data-js-todo-item]');
+
+    if (itemElement) {
+      const itemId = itemElement.dataset.itemId;
+      if (itemId) {
+        this.startEditing(itemId);
+      }
+    }
+  }
+
+  onKeyDown = (event) => {
+    if (this.editingItemId && event.key === 'Enter') {
+      const input = this.listElement.querySelector(
+        `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
+      );
+      if (input) {
+        this.saveEditing(this.editingItemId, input.value);
+      }
+      event.preventDefault();
+    }
+    else if (this.editingItemId && event.key === 'Escape') {
+      this.cancelEditing();
+    }
+  }
+
+  onBlur = (event) => {
+    if (this.editingItemId && event.target.matches(this.selectors.itemInput)) {
+      setTimeout(() => {
+        if (this.editingItemId) {
+          const input = this.listElement.querySelector(
+            `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
+          );
+          if (input) {
+            this.saveEditing(this.editingItemId, input.value);
+          }
+        }
+      }, 100);
     }
   }
 
@@ -260,9 +362,11 @@ class Todo {
     this.checkAllButtonElement.addEventListener('click', this.onCheckAllButtonClick);
     this.deleteButtonElement.addEventListener('click', this.onDeleteButtonClick);
     this.listElement.addEventListener('click', this.onClick);
+    this.listElement.addEventListener('dblclick', this.onDoubleClick);
     this.listElement.addEventListener('change', this.onChange);
     this.rootElement.addEventListener('click', this.onFilterButtonClick);
-
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('blur', this.onBlur.bind(this), true);
   }
 }
 
