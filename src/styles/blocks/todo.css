@@ -1,19 +1,24 @@
 .todo {
   display: flex;
   flex-direction: column;
-  row-gap: 25px;
+  row-gap: 35px;
   width: 100%;
-  max-width: 600px;
-  padding: 25px;
+  max-width: 800px;
+  padding: 50px;
   background-color: var(--color-white);
   border: var(--border);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+
+  @media(max-width: 520px) {
+    padding: 20px;
+    row-gap: 15px;
+  }
 }
 
 .todo__title {
   text-align: center;
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -141,7 +146,7 @@
 }
 
 .todo__list {
-  --todoListRowGap: 8px;
+  --todoListRowGap: 12px;
 
   display: grid;
   row-gap: var(--todoListRowGap);
