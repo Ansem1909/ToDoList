@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   column-gap: 12px;
-  padding-left: 10px;
+  padding: 10px;
   border: var(--border);
   border-radius: var(--border-radius);
   transition-duration: var(--transition-duration);
@@ -87,6 +87,10 @@
 .todo-item__label {
   width: 100%;
   pointer-events: none;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+
 }
 
 .todo-item__delete-button {
@@ -130,6 +134,8 @@
   border-radius: 0;
   outline: none;
   pointer-events: none;
+  line-height: inherit;
+  min-height: inherit;
 
   &:focus {
     outline: none;
@@ -140,6 +146,17 @@
 .todo-item.is-editing {
   border-color: var(--color-orange-1);
   box-shadow: 0 0 0 1px var(--color-orange-2);
+  animation: pulse 1.5s infinite alternate;
+
+  .todo-item__checkbox,
+  .todo-item__delete-button {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+    overflow: hidden;
+    pointer-events: none;
+    transition: all var(--transition-duration);
+  }
 
   .todo-item__label {
     display: none;
