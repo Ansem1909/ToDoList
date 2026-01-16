@@ -29,25 +29,7 @@
       </div>
       <button class="button" type="submit" >Add</button>
     </form>
-    <form class="todo__form" data-js-todo-search-task-form>
-      <div class="todo__field field">
-        <label
-            class="field__label"
-            for="search-task"
-        >
-          Search task
-        </label>
-        <input
-            class="field__input"
-            id="search-task"
-            placeholder=" "
-            autocomplete="off"
-            type="search"
-            data-js-todo-search-task-input
-        />
-      </div>
-    </form>
-    <button class="button" title="Toggle all tasks" data-js-todo-check-all-button>Выбрать все задачи</button>
+    <button class="button button__toggle-all" title="Toggle all tasks" data-js-todo-check-all-button>Toggle all tasks</button>
     <div class="todo__info">
       <div class="todo__total-tasks">
         Total tasks: <span data-js-todo-total-tasks>0</span>
@@ -107,6 +89,6 @@
       </button>
     </div>
     <ul class="todo__list" data-js-todo-list></ul>
-    <div class="todo__empty-message" data-js-todo-empty-message></div>
+    <p class="todo__edit-hint">Double-click a task to edit it</p>
   </div>
 </body>

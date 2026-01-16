@@ -18,7 +18,6 @@
 
 .field__input {
   --fieldInputPaddingX: 16px;
-  --fieldSeachInputIconSize: 16px;
 
   width: 100%;
   height: var(--input-height);
@@ -35,15 +34,5 @@
   &:focus {
     background-color: transparent;
     outline: none;
-  }
-
-  &[type="search"] {
-    &:placeholder-shown {
-      padding-right: calc(var(--fieldInputPaddingX) * 2 + var(--fieldSeachInputIconSize));
-      background-image: url('../../icons/search-icon.svg');
-      background-position: calc(100% - var(--fieldInputPaddingX)) 50%;
-      background-size: var(--fieldSeachInputIconSize);
-      background-repeat: no-repeat;
-    }
   }
 }

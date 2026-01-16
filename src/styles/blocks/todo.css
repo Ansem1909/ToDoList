@@ -1,19 +1,24 @@
 .todo {
   display: flex;
   flex-direction: column;
-  row-gap: 25px;
+  row-gap: 35px;
   width: 100%;
-  max-width: 600px;
-  padding: 25px;
+  max-width: 800px;
+  padding: 50px;
   background-color: var(--color-white);
   border: var(--border);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+
+  @media(max-width: 520px) {
+    padding: 20px;
+    row-gap: 15px;
+  }
 }
 
 .todo__title {
   text-align: center;
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -21,6 +26,19 @@
 .todo__form {
   display: flex;
   column-gap: 16px;
+}
+
+.todo__edit-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--color-gray-1);
+  text-align: center;
+  font-style: italic;
+
+  @media(max-width: 520px) {
+    font-size: 11px;
+    margin: 6px 0 0;
+  }
 }
 
 .todo__field {
@@ -116,21 +134,20 @@
   }
 }
 
-.todo__list,
-.todo__empty-message {
+.button__toggle-all:not(.is-visible) {
+  display: none;
+  transition-duration: var(--transition-duration);
+}
+
+.todo__list {
   &:empty {
     display: none;
   }
 }
 
 .todo__list {
-  --todoListRowGap: 8px;
+  --todoListRowGap: 12px;
 
   display: grid;
   row-gap: var(--todoListRowGap);
-}
-
-.todo__empty-message {
-  text-align: center;
-  color: var(--color-gray-1);
 }
