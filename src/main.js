@@ -138,11 +138,14 @@ class Todo {
   }
 
   addItem(title) {
-    this.state.items.push({
-      id: crypto?.randomUUID() ?? Date.now().toString(),
-      title: title,
-      isChecked: false,
-    });
+    this.state.items = [
+      ...this.state.items,
+      {
+        id: crypto?.randomUUID() ?? Date.now().toString(),
+        title: title,
+        isChecked: false,
+      }
+    ];
 
     this.setFilterFromFilterPanel(this.state.currentFilter);
     this.saveItemsToLocalStorage();
