@@ -68,18 +68,19 @@ class Todo {
     localStorage.setItem(this.localStorageKey, JSON.stringify(this.state.items));
   }
 
-  render() {
+  updateUI() {
     this.totalTasksElement.textContent = this.state.items.length;
 
     const hasTasks = this.state.items.length > 0;
-
-    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);
+    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
     this.checkAllButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
 
     this.filterButtonsElements.forEach(element => {
-      element.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);
+      element.classList.toggle(this.stateClasses.isVisible, hasTasks);
     });
+  }
 
+  renderItems() {
     const items = this.state.filteredItems ?? this.state.items;
 
     this.listElement.innerHTML = items.map(({ id, title, isChecked }) => {
@@ -123,7 +124,9 @@ class Todo {
     </li>
     `;
     }).join(' ');
+  }
 
+  focusEditingItem() {
     if (this.editingItemId) {
       setTimeout(() => {
         const input = this.listElement.querySelector(
@@ -135,6 +138,12 @@ class Todo {
         }
       }, 0);
     }
+  }
+
+  render() {
+    this.updateUI();
+    this.renderItems();
+    this.focusEditingItem();
   }
 
   addItem(title) {
@@ -163,16 +172,6 @@ class Todo {
   startEditing(id) {
     this.editingItemId = id;
     this.render();
-
-    setTimeout(() => {
-      const input = this.listElement.querySelector(
-        `[data-item-id="${id}"] [data-js-todo-item-input]`
-      );
-      if (input) {
-        input.focus();
-        input.select();
-      }
-    }, 0);
   }
 
   saveEditing(id, newTitle) {
