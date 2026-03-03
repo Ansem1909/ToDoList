@@ -42,6 +42,9 @@ class Todo {
 
     this.editingItemId = null;
 
+    this.onKeyDownBound = this.onKeyDown.bind(this);
+    this.onBlurBound = this.onBlur.bind(this);
+
     this.render();
     this.bindEvents()
     this.setFilterFromFilterPanel('all');
@@ -369,6 +372,9 @@ class Todo {
     this.rootElement.addEventListener('click', this.onFilterButtonClick);
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('blur', this.onBlur.bind(this), true);
+
+    document.addEventListener('keydown', this.onKeyDownBound);
+    document.addEventListener('blur', this.onBlurBound, true);
   }
 }
 
