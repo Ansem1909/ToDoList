@@ -243,6 +243,8 @@ class Todo {
         this.state.filteredItems = this.state.items.filter(item => item.isChecked);
         break;
     }
+
+    this.render();
   }
 
   onNewTaskFormSubmit = (event) => {
