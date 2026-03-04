@@ -139,16 +139,15 @@ class Todo {
   }
 
   focusEditingItem() {
-    if (this.editingItemId) {
-      setTimeout(() => {
-        const input = this.listElement.querySelector(
-          `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
-        );
-        if (input) {
-          input.focus();
-          input.select();
-        }
-      }, 0);
+    if (!this.editingItemId) return;
+
+    const input = this.listElement.querySelector(
+      `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
+    );
+
+    if (input) {
+      input.focus();
+      input.select();
     }
   }
 
@@ -314,17 +313,17 @@ class Todo {
   }
 
   onBlur = (event) => {
-    if (this.editingItemId && event.target.matches(this.selectors.itemInput)) {
-      setTimeout(() => {
-        if (this.editingItemId) {
-          const input = this.listElement.querySelector(
-            `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
-          );
-          if (input) {
-            this.saveEditing(this.editingItemId, input.value);
-          }
-        }
-      }, 100);
+    if (!this.editingItemId) return;
+    if (!event.target.matches(this.selectors.itemInput)) return;
+
+    const relatedTarget = event.relatedTarget;
+
+    const isClickOnFilter = relatedTarget?.matches(this.selectors.filterButton);
+    const isClickOnDelete = relatedTarget?.matches(this.selectors.itemDeleteButton);
+    const isClickOutside = !relatedTarget || !this.rootElement.contains(relatedTarget);
+
+    if (isClickOnFilter || isClickOnDelete || isClickOutside) {
+      this.saveEditing(this.editingItemId, event.target.value);
     }
   }
 
