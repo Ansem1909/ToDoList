@@ -19,13 +19,6 @@ class Todo {
     isVisible: 'is-visible',
     isDisappearing: 'is-disappearing',
     isEditing: 'is-editing',
-    isActive: 'is-active',
-  }
-
-  filterTypes = {
-    ALL: 'all',
-    ACTIVE: 'active',
-    COMPLETED: 'completed',
   }
 
   localStorageKey = 'todo-items';
@@ -44,7 +37,7 @@ class Todo {
     this.state = {
       items: this.getItemsInfoFromLocalStorage(),
       filteredItems: null,
-      currentFilter: this.filterTypes.ALL,
+      currentFilter: 'all',
     }
 
     this.editingItemId = null;
@@ -54,7 +47,7 @@ class Todo {
 
     this.render();
     this.bindEvents()
-    this.setFilterFromFilterPanel(this.filterTypes.ALL);
+    this.setFilterFromFilterPanel('all');
   }
 
   getItemsInfoFromLocalStorage() {
@@ -231,22 +224,29 @@ class Todo {
     this.state.currentFilter = filterType;
 
     const allFilterButtons = this.rootElement.querySelectorAll('.todo__filter-button');
+
     allFilterButtons.forEach(button => {
-      const shouldBeActive = button.dataset.filter === filterType;
-      button.classList.toggle(this.stateClasses.isActive, shouldBeActive);
+      button.classList.remove('active');
+    });
+
+    const activeButtons = this.rootElement.querySelectorAll(`[data-filter="${filterType}"]`);
+    activeButtons.forEach(button => {
+      button.classList.add('active');
     });
 
     switch(filterType) {
-      case this.filterTypes.ALL:
+      case 'all':
         this.state.filteredItems = null;
         break;
-      case this.filterTypes.ACTIVE:
+      case 'active':
         this.state.filteredItems = this.state.items.filter(item => !item.isChecked);
         break;
-      case this.filterTypes.COMPLETED:
+      case 'completed':
         this.state.filteredItems = this.state.items.filter(item => item.isChecked);
         break;
     }
+
+    this.render();
   }
 
   onNewTaskFormSubmit = (event) => {
@@ -336,11 +336,9 @@ class Todo {
   onFilterButtonClick = ({ target }) => {
     if (target.classList.contains('todo__filter-button')) {
       const filterType = target.dataset.filter;
-      const { ALL, ACTIVE, COMPLETED } = this.filterTypes;
 
-      if (filterType === ALL || filterType === ACTIVE || filterType === COMPLETED) {
+      if (filterType === 'all' || filterType === 'active' || filterType === 'completed') {
         this.setFilterFromFilterPanel(filterType);
-        this.render();
       }
     }
   }
@@ -372,6 +370,7 @@ class Todo {
     this.listElement.addEventListener('dblclick', this.onDoubleClick);
     this.listElement.addEventListener('change', this.onChange);
     this.rootElement.addEventListener('click', this.onFilterButtonClick);
+
     document.addEventListener('keydown', this.onKeyDownBound);
     document.addEventListener('blur', this.onBlurBound, true);
   }
