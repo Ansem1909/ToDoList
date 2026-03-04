@@ -34,6 +34,11 @@ class Todo {
 
   constructor() {
     this.rootElement = document.querySelector(this.selectors.root);
+
+    if (!this.rootElement) {
+      throw new Error(`Root element ${this.selectors.root} not found`);
+    }
+
     this.newTaskFormElement = this.rootElement.querySelector(this.selectors.newTaskForm);
     this.newTaskInputElement = this.rootElement.querySelector(this.selectors.newTaskInput);
     this.checkAllButtonElement = this.rootElement.querySelector(this.selectors.checkAllButton);
@@ -42,10 +47,14 @@ class Todo {
     this.deleteButtonElement = this.rootElement.querySelector(this.selectors.deleteButton);
     this.listElement = this.rootElement.querySelector(this.selectors.list);
 
+    if (!this.newTaskFormElement || !this.newTaskInputElement || !this.listElement) {
+      throw new Error('Critical Todo elements not found');
+    }
+
     this.state = {
       items: this.getItemsInfoFromLocalStorage(),
       filteredItems: null,
-      currentFilter: 'all',
+      currentFilter: this.filterTypes.ALL,
     }
 
     this.editingItemId = null;
@@ -54,7 +63,7 @@ class Todo {
     this.onBlurBound = this.onBlur.bind(this);
 
     this.render();
-    this.bindEvents()
+    this.bindEvents();
     this.setFilterFromFilterPanel('all');
   }
 
@@ -167,17 +176,13 @@ class Todo {
       }
     ];
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   deleteItem(id) {
     this.state.items = this.state.items.filter((item) => item.id !== id);
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   startEditing(id) {
@@ -223,9 +228,7 @@ class Todo {
       return item;
     })
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   setFilterFromFilterPanel(filterType) {
@@ -249,6 +252,12 @@ class Todo {
     }
   }
 
+  updateStateAndRender() {
+    this.setFilterFromFilterPanel(this.state.currentFilter);
+    this.saveItemsToLocalStorage();
+    this.render();
+  }
+
   onNewTaskFormSubmit = (event) => {
     event.preventDefault();
 
@@ -267,9 +276,7 @@ class Todo {
     if (isConfirmed) {
       this.state.items = this.state.items.filter((item) => !item.isChecked);
 
-      this.setFilterFromFilterPanel(this.state.currentFilter);
-      this.saveItemsToLocalStorage();
-      this.render();
+      this.updateStateAndRender();
     }
   }
 
@@ -359,9 +366,7 @@ class Todo {
       isChecked: !allChecked
     }));
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   bindEvents() {
@@ -372,8 +377,8 @@ class Todo {
     this.listElement.addEventListener('dblclick', this.onDoubleClick);
     this.listElement.addEventListener('change', this.onChange);
     this.rootElement.addEventListener('click', this.onFilterButtonClick);
+    this.rootElement.addEventListener('keydown', this.onKeyDownBound);
 
-    document.addEventListener('keydown', this.onKeyDownBound);
     document.addEventListener('blur', this.onBlurBound, true);
   }
 }
