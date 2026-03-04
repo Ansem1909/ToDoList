@@ -109,7 +109,7 @@
     background-color: var(--color-orange-2);
   }
 
-  &.active {
+  &.is-active {
     border-color: var(--color-orange-1);
   }
 }
