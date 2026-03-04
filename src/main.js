@@ -6,6 +6,7 @@ class Todo {
     checkAllButton: '[data-js-todo-check-all-button]',
     totalTasks: '[data-js-todo-total-tasks]',
     filterButtons: '[data-js-todo-filter-buttons]',
+    filterButton: '[data-js-todo-filter-button]',
     deleteButton: '[data-js-todo-delete-button]',
     list: '[data-js-todo-list]',
     item: '[data-js-todo-item]',
@@ -19,6 +20,13 @@ class Todo {
     isVisible: 'is-visible',
     isDisappearing: 'is-disappearing',
     isEditing: 'is-editing',
+    isActive: 'is-active',
+  }
+
+  filterTypes = {
+    ALL: 'all',
+    ACTIVE: 'active',
+    COMPLETED: 'completed',
   }
 
   localStorageKey = 'todo-items';
@@ -30,7 +38,7 @@ class Todo {
     this.newTaskInputElement = this.rootElement.querySelector(this.selectors.newTaskInput);
     this.checkAllButtonElement = this.rootElement.querySelector(this.selectors.checkAllButton);
     this.totalTasksElement = this.rootElement.querySelector(this.selectors.totalTasks);
-    this.filterButtonsElements = this.rootElement.querySelectorAll(this.selectors.filterButtons);
+    this.filterButtonElements = this.rootElement.querySelectorAll(this.selectors.filterButton);
     this.deleteButtonElement = this.rootElement.querySelector(this.selectors.deleteButton);
     this.listElement = this.rootElement.querySelector(this.selectors.list);
 
@@ -78,9 +86,10 @@ class Todo {
     this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
     this.checkAllButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
 
-    this.filterButtonsElements.forEach(element => {
-      element.classList.toggle(this.stateClasses.isVisible, hasTasks);
-    });
+    const filterContainer = this.rootElement.querySelector(this.selectors.filterButtons);
+    if (filterContainer) {
+      filterContainer.classList.toggle(this.stateClasses.isVisible, hasTasks);
+    }
   }
 
   renderItems() {
@@ -223,30 +232,22 @@ class Todo {
   setFilterFromFilterPanel(filterType) {
     this.state.currentFilter = filterType;
 
-    const allFilterButtons = this.rootElement.querySelectorAll('.todo__filter-button');
-
-    allFilterButtons.forEach(button => {
-      button.classList.remove('active');
-    });
-
-    const activeButtons = this.rootElement.querySelectorAll(`[data-filter="${filterType}"]`);
-    activeButtons.forEach(button => {
-      button.classList.add('active');
+    this.filterButtonElements.forEach(button => {
+      const shouldBeActive = button.dataset.filter === filterType;
+      button.classList.toggle(this.stateClasses.isActive, shouldBeActive);
     });
 
     switch(filterType) {
-      case 'all':
+      case this.filterTypes.ALL:
         this.state.filteredItems = null;
         break;
-      case 'active':
+      case this.filterTypes.ACTIVE:
         this.state.filteredItems = this.state.items.filter(item => !item.isChecked);
         break;
-      case 'completed':
+      case this.filterTypes.COMPLETED:
         this.state.filteredItems = this.state.items.filter(item => item.isChecked);
         break;
     }
-
-    this.render();
   }
 
   onNewTaskFormSubmit = (event) => {
@@ -334,11 +335,13 @@ class Todo {
   }
 
   onFilterButtonClick = ({ target }) => {
-    if (target.classList.contains('todo__filter-button')) {
+    if (target.matches(this.selectors.filterButton)) {
       const filterType = target.dataset.filter;
+      const { ALL, ACTIVE, COMPLETED } = this.filterTypes;
 
-      if (filterType === 'all' || filterType === 'active' || filterType === 'completed') {
+      if (filterType === ALL || filterType === ACTIVE || filterType === COMPLETED) {
         this.setFilterFromFilterPanel(filterType);
+        this.render();
       }
     }
   }
