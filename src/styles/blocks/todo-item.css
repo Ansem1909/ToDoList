@@ -46,9 +46,9 @@
   }
 
   &:checked {
+    color: var(--color-green-1);
     background-color: var(--color-green-1);
     border-color: var(--color-green-1);
-    color: var(--color-green-1);
 
     &:hover {
       background-color: var(--color-green-2);
@@ -61,8 +61,8 @@
     }
 
     & + .todo-item__label {
-      color: var(--color-gray-1);
       text-decoration: line-through;
+      color: var(--color-gray-1);
     }
   }
 
@@ -90,7 +90,6 @@
   word-break: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
-
 }
 
 .todo-item__delete-button {
@@ -125,21 +124,21 @@
 .todo-item__input {
   display: none;
   width: 100%;
-  padding: 0;
+  min-height: inherit;
   margin: 0;
+  padding: 0;
   font: inherit;
+  line-height: inherit;
   color: var(--color-black);
   background-color: transparent;
   border: none;
   border-radius: 0;
   outline: none;
   pointer-events: none;
-  line-height: inherit;
-  min-height: inherit;
 
   &:focus {
-    outline: none;
     border-bottom: 2px solid var(--color-gray-2);
+    outline: none;
   }
 }
 
