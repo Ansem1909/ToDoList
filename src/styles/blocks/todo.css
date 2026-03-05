@@ -73,6 +73,8 @@
 .todo__filter-buttons {
   grid-column: 2;
   justify-self: center;
+  display: inline-flex;
+  column-gap: 16px;
 
   opacity: 0;
   visibility: hidden;
