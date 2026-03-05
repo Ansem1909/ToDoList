@@ -6,6 +6,7 @@ class Todo {
     checkAllButton: '[data-js-todo-check-all-button]',
     totalTasks: '[data-js-todo-total-tasks]',
     filterButtons: '[data-js-todo-filter-buttons]',
+    filterButton: '[data-js-todo-filter-button]',
     deleteButton: '[data-js-todo-delete-button]',
     list: '[data-js-todo-list]',
     item: '[data-js-todo-item]',
@@ -19,6 +20,13 @@ class Todo {
     isVisible: 'is-visible',
     isDisappearing: 'is-disappearing',
     isEditing: 'is-editing',
+    isActive: 'is-active',
+  }
+
+  filterTypes = {
+    ALL: 'all',
+    ACTIVE: 'active',
+    COMPLETED: 'completed',
   }
 
   localStorageKey = 'todo-items';
@@ -26,24 +34,36 @@ class Todo {
 
   constructor() {
     this.rootElement = document.querySelector(this.selectors.root);
+
+    if (!this.rootElement) {
+      throw new Error(`Root element ${this.selectors.root} not found`);
+    }
+
     this.newTaskFormElement = this.rootElement.querySelector(this.selectors.newTaskForm);
     this.newTaskInputElement = this.rootElement.querySelector(this.selectors.newTaskInput);
     this.checkAllButtonElement = this.rootElement.querySelector(this.selectors.checkAllButton);
     this.totalTasksElement = this.rootElement.querySelector(this.selectors.totalTasks);
-    this.filterButtonsElements = this.rootElement.querySelectorAll(this.selectors.filterButtons);
+    this.filterButtonElements = this.rootElement.querySelectorAll(this.selectors.filterButton);
     this.deleteButtonElement = this.rootElement.querySelector(this.selectors.deleteButton);
     this.listElement = this.rootElement.querySelector(this.selectors.list);
+
+    if (!this.newTaskFormElement || !this.newTaskInputElement || !this.listElement) {
+      throw new Error('Critical Todo elements not found');
+    }
 
     this.state = {
       items: this.getItemsInfoFromLocalStorage(),
       filteredItems: null,
-      currentFilter: 'all',
+      currentFilter: this.filterTypes.ALL,
     }
 
     this.editingItemId = null;
 
+    this.onKeyDownBound = this.onKeyDown.bind(this);
+    this.onBlurBound = this.onBlur.bind(this);
+
     this.render();
-    this.bindEvents()
+    this.bindEvents();
     this.setFilterFromFilterPanel('all');
   }
 
@@ -68,18 +88,20 @@ class Todo {
     localStorage.setItem(this.localStorageKey, JSON.stringify(this.state.items));
   }
 
-  render() {
+  updateUI() {
     this.totalTasksElement.textContent = this.state.items.length;
 
     const hasTasks = this.state.items.length > 0;
-
-    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);
+    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
     this.checkAllButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
 
-    this.filterButtonsElements.forEach(element => {
-      element.classList.toggle(this.stateClasses.isVisible, this.state.items.length > 0);
-    });
+    const filterContainer = this.rootElement.querySelector(this.selectors.filterButtons);
+    if (filterContainer) {
+      filterContainer.classList.toggle(this.stateClasses.isVisible, hasTasks);
+    }
+  }
 
+  renderItems() {
     const items = this.state.filteredItems ?? this.state.items;
 
     this.listElement.innerHTML = items.map(({ id, title, isChecked }) => {
@@ -123,53 +145,49 @@ class Todo {
     </li>
     `;
     }).join(' ');
+  }
 
-    if (this.editingItemId) {
-      setTimeout(() => {
-        const input = this.listElement.querySelector(
-          `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
-        );
-        if (input) {
-          input.focus();
-          input.select();
-        }
-      }, 0);
+  focusEditingItem() {
+    if (!this.editingItemId) return;
+
+    const input = this.listElement.querySelector(
+      `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
+    );
+
+    if (input) {
+      input.focus();
+      input.select();
     }
   }
 
-  addItem(title) {
-    this.state.items.push({
-      id: crypto?.randomUUID() ?? Date.now().toString(),
-      title: title,
-      isChecked: false,
-    });
+  render() {
+    this.updateUI();
+    this.renderItems();
+    this.focusEditingItem();
+  }
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+  addItem(title) {
+    this.state.items = [
+      ...this.state.items,
+      {
+        id: crypto?.randomUUID() ?? Date.now().toString(),
+        title: title,
+        isChecked: false,
+      }
+    ];
+
+    this.updateStateAndRender();
   }
 
   deleteItem(id) {
     this.state.items = this.state.items.filter((item) => item.id !== id);
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   startEditing(id) {
     this.editingItemId = id;
     this.render();
-
-    setTimeout(() => {
-      const input = this.listElement.querySelector(
-        `[data-item-id="${id}"] [data-js-todo-item-input]`
-      );
-      if (input) {
-        input.focus();
-        input.select();
-      }
-    }, 0);
   }
 
   saveEditing(id, newTitle) {
@@ -210,37 +228,33 @@ class Todo {
       return item;
     })
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   setFilterFromFilterPanel(filterType) {
     this.state.currentFilter = filterType;
 
-    const allFilterButtons = this.rootElement.querySelectorAll('.todo__filter-button');
-
-    allFilterButtons.forEach(button => {
-      button.classList.remove('active');
-    });
-
-    const activeButtons = this.rootElement.querySelectorAll(`[data-filter="${filterType}"]`);
-    activeButtons.forEach(button => {
-      button.classList.add('active');
+    this.filterButtonElements.forEach(button => {
+      const shouldBeActive = button.dataset.filter === filterType;
+      button.classList.toggle(this.stateClasses.isActive, shouldBeActive);
     });
 
     switch(filterType) {
-      case 'all':
+      case this.filterTypes.ALL:
         this.state.filteredItems = null;
         break;
-      case 'active':
+      case this.filterTypes.ACTIVE:
         this.state.filteredItems = this.state.items.filter(item => !item.isChecked);
         break;
-      case 'completed':
+      case this.filterTypes.COMPLETED:
         this.state.filteredItems = this.state.items.filter(item => item.isChecked);
         break;
     }
+  }
 
+  updateStateAndRender() {
+    this.setFilterFromFilterPanel(this.state.currentFilter);
+    this.saveItemsToLocalStorage();
     this.render();
   }
 
@@ -262,9 +276,7 @@ class Todo {
     if (isConfirmed) {
       this.state.items = this.state.items.filter((item) => !item.isChecked);
 
-      this.setFilterFromFilterPanel(this.state.currentFilter);
-      this.saveItemsToLocalStorage();
-      this.render();
+      this.updateStateAndRender();
     }
   }
 
@@ -308,17 +320,17 @@ class Todo {
   }
 
   onBlur = (event) => {
-    if (this.editingItemId && event.target.matches(this.selectors.itemInput)) {
-      setTimeout(() => {
-        if (this.editingItemId) {
-          const input = this.listElement.querySelector(
-            `[data-item-id="${this.editingItemId}"] [data-js-todo-item-input]`
-          );
-          if (input) {
-            this.saveEditing(this.editingItemId, input.value);
-          }
-        }
-      }, 100);
+    if (!this.editingItemId) return;
+    if (!event.target.matches(this.selectors.itemInput)) return;
+
+    const relatedTarget = event.relatedTarget;
+
+    const isClickOnFilter = relatedTarget?.matches(this.selectors.filterButton);
+    const isClickOnDelete = relatedTarget?.matches(this.selectors.itemDeleteButton);
+    const isClickOutside = !relatedTarget || !this.rootElement.contains(relatedTarget);
+
+    if (isClickOnFilter || isClickOnDelete || isClickOutside) {
+      this.saveEditing(this.editingItemId, event.target.value);
     }
   }
 
@@ -329,11 +341,13 @@ class Todo {
   }
 
   onFilterButtonClick = ({ target }) => {
-    if (target.classList.contains('todo__filter-button')) {
+    if (target.matches(this.selectors.filterButton)) {
       const filterType = target.dataset.filter;
+      const { ALL, ACTIVE, COMPLETED } = this.filterTypes;
 
-      if (filterType === 'all' || filterType === 'active' || filterType === 'completed') {
+      if (filterType === ALL || filterType === ACTIVE || filterType === COMPLETED) {
         this.setFilterFromFilterPanel(filterType);
+        this.render();
       }
     }
   }
@@ -352,9 +366,7 @@ class Todo {
       isChecked: !allChecked
     }));
 
-    this.setFilterFromFilterPanel(this.state.currentFilter);
-    this.saveItemsToLocalStorage();
-    this.render();
+    this.updateStateAndRender();
   }
 
   bindEvents() {
@@ -365,8 +377,9 @@ class Todo {
     this.listElement.addEventListener('dblclick', this.onDoubleClick);
     this.listElement.addEventListener('change', this.onChange);
     this.rootElement.addEventListener('click', this.onFilterButtonClick);
-    document.addEventListener('keydown', this.onKeyDown.bind(this));
-    document.addEventListener('blur', this.onBlur.bind(this), true);
+    this.rootElement.addEventListener('keydown', this.onKeyDownBound);
+
+    document.addEventListener('blur', this.onBlurBound, true);
   }
 }
 

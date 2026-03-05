@@ -39,6 +39,7 @@
             class="todo__filter-button active"
             type="button"
             data-filter="all"
+            data-js-todo-filter-button
         >
           All
         </button>
@@ -46,6 +47,7 @@
             class="todo__filter-button"
             type="button"
             data-filter="active"
+            data-js-todo-filter-button
         >
           Active
         </button>
@@ -53,6 +55,7 @@
             class="todo__filter-button"
             type="button"
             data-filter="completed"
+            data-js-todo-filter-button
         >
           Completed
         </button>
@@ -63,29 +66,6 @@
           data-js-todo-delete-button
       >
         Delete
-      </button>
-    </div>
-    <div class="todo__filter-buttons todo__filter-buttons--mobile" data-js-todo-filter-buttons>
-      <button
-          class="todo__filter-button active"
-          type="button"
-          data-filter="all"
-      >
-        All
-      </button>
-      <button
-          class="todo__filter-button"
-          type="button"
-          data-filter="active"
-      >
-        Active
-      </button>
-      <button
-          class="todo__filter-button"
-          type="button"
-          data-filter="completed"
-      >
-        Completed
       </button>
     </div>
     <ul class="todo__list" data-js-todo-list></ul>
