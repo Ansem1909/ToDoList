@@ -11,34 +11,21 @@
   box-shadow: var(--box-shadow);
 
   @media(max-width: 767px) {
-    padding: 20px;
     row-gap: 15px;
+    padding: 20px;
   }
 }
 
 .todo__title {
-  text-align: center;
   font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
+  text-align: center;
 }
 
 .todo__form {
   display: flex;
   column-gap: 16px;
-}
-
-.todo__edit-hint {
-  margin: 8px 0 0;
-  font-size: 12px;
-  color: var(--color-gray-1);
-  text-align: center;
-  font-style: italic;
-
-  @media(max-width: 767px) {
-    font-size: 11px;
-    margin: 6px 0 0;
-  }
 }
 
 .todo__field {
@@ -74,7 +61,7 @@
   grid-column: 2;
   justify-self: center;
   display: inline-flex;
-  column-gap: 16px;
+  column-gap: 14px;
 
   opacity: 0;
   visibility: hidden;
@@ -92,33 +79,24 @@
     display: flex;
     justify-content: center;
   }
-}
 
-.todo__delete-button {
-  grid-column: 3;
-  justify-self: end;
-
-  &:not(.is-visible) {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  @media(max-width: 767px) {
-    grid-area: delete;
+  @media(max-width: 359px) {
+    display: flex;
+    flex-direction: column;
   }
 }
 
 .todo__filter-button {
   padding: 3px 9px;
   color: var(--color-black);
+  background-color: var(--color-white);
   border: 2px solid transparent;
   border-radius: var(--border-radius);
-  background-color: var(--color-white);
   transition-duration: var(--transition-duration);
 
   &:hover {
-    background-color: var(--color-orange-1);
     color: var(--color-white);
+    background-color: var(--color-orange-1);
   }
 
   &:active {
@@ -131,10 +109,16 @@
 }
 
 .todo__delete-button {
+  grid-column: 3;
+  justify-self: end;
   padding: 0;
+  color: var(--color-black);
   background-color: transparent;
   border: none;
-  color: var(--color-black);
+
+  @media(max-width: 767px) {
+    grid-area: delete;
+  }
 
   &:hover {
     color: var(--color-orange-1);
@@ -156,14 +140,24 @@
 }
 
 .todo__list {
+  --todoListRowGap: 12px;
+
+  display: grid;
+  row-gap: var(--todoListRowGap);
+
   &:empty {
     display: none;
   }
 }
 
-.todo__list {
-  --todoListRowGap: 12px;
+.todo__edit-hint {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-style: italic;
+  text-align: center;
+  color: var(--color-gray-1);
 
-  display: grid;
-  row-gap: var(--todoListRowGap);
+  @media(max-width: 767px) {
+    margin: 6px 0 0;
+  }
 }

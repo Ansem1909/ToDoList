@@ -1,7 +1,7 @@
 .button {
   display: inline-flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   height: var(--input-height);
   min-width: 53px;
   padding: 12px;
