@@ -31,6 +31,15 @@ class Todo {
 
   localStorageKey = 'todo-items';
 
+  escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   constructor() {
     this.rootElement = document.querySelector(this.selectors.root);
@@ -103,9 +112,11 @@ class Todo {
 
   renderItems() {
     const items = this.state.filteredItems ?? this.state.items;
+    const sortedItems = [...items].reverse();
 
-    this.listElement.innerHTML = items.map(({ id, title, isChecked }) => {
+    this.listElement.innerHTML = sortedItems.map(({ id, title, isChecked }) => {
       const isEditing = this.editingItemId === id;
+      const escapedTitle = this.escapeHtml(title);
       return `
     <li class="todo__item todo-item ${isEditing ? this.stateClasses.isEditing : ''}" 
         data-js-todo-item
@@ -123,12 +134,12 @@ class Todo {
           for="${id}"
           data-js-todo-item-label
       >
-        ${title}
+        ${escapedTitle}
       </label>
       <input
           class="todo-item__input"
           type="text"
-          value="${title}"
+          value="${escapedTitle}"
           data-js-todo-item-input
       />
       <button
