@@ -178,11 +178,15 @@ class Todo {
   }
 
   addItem(title) {
+    const escapedTitle = this.escapeHtml(title.trim());
+
+    if (escapedTitle === '') return;
+
     this.state.items = [
       ...this.state.items,
       {
         id: crypto?.randomUUID() ?? Date.now().toString(),
-        title: title,
+        title: escapedTitle,
         isChecked: false,
       }
     ];
@@ -202,14 +206,16 @@ class Todo {
   }
 
   saveEditing(id, newTitle) {
-    if (newTitle.trim() === '') {
+    const escapedTitle = this.escapeHtml(newTitle.trim());
+
+    if (escapedTitle === '') {
       this.deleteItem(id);
     } else {
       this.state.items = this.state.items.map((item) => {
         if (item.id === id) {
           return {
             ...item,
-            title: newTitle.trim(),
+            title: escapedTitle,
           };
         }
         return item;
