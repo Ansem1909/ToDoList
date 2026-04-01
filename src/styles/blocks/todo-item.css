@@ -87,9 +87,10 @@
 .todo-item__label {
   width: 100%;
   pointer-events: none;
-  word-break: break-word;
+  word-break: break-all;
   overflow-wrap: break-word;
-  hyphens: auto;
+  hyphens: none;
+  white-space: normal;
 }
 
 .todo-item__delete-button {
