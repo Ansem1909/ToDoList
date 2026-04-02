@@ -138,7 +138,6 @@
   pointer-events: none;
 
   &:focus {
-    border-bottom: 2px solid var(--color-gray-2);
     outline: none;
   }
 }
