@@ -98,15 +98,15 @@ class Todo {
   }
 
   updateUI() {
-    this.totalTasksElement.textContent = this.state.items.length;
+    const activeTasksCount = this.state.items.filter(item => !item.isChecked).length;
+    const taskWord = activeTasksCount === 1 ? 'task' : 'tasks';
+    this.totalTasksElement.textContent = `${activeTasksCount} ${taskWord} left`;
 
     const hasTasks = this.state.items.length > 0;
     const hasCompletedTasks = this.state.items.some(item => item.isChecked);
 
-    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
+    this.deleteButtonElement.classList.toggle(this.stateClasses.isVisible, hasCompletedTasks);
     this.checkAllButtonElement.classList.toggle(this.stateClasses.isVisible, hasTasks);
-
-    this.deleteButtonElement.classList.toggle('is-inactive', !hasCompletedTasks);
 
     const filterContainer = this.rootElement.querySelector(this.selectors.filterButtons);
     if (filterContainer) {
@@ -298,10 +298,8 @@ class Todo {
       return;
     }
 
-    if (confirm('Are you sure you want to delete all completed tasks??')) {
-      this.state.items = this.state.items.filter((item) => !item.isChecked);
-      this.updateStateAndRender();
-    }
+    this.state.items = this.state.items.filter((item) => !item.isChecked);
+    this.updateStateAndRender();
   }
 
   onClick = ({ target }) => {
