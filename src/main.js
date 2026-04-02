@@ -258,6 +258,7 @@ class Todo {
     this.filterButtonElements.forEach(button => {
       const shouldBeActive = button.dataset.filter === filterType;
       button.classList.toggle(this.stateClasses.isActive, shouldBeActive);
+      button.setAttribute('aria-pressed', shouldBeActive);
     });
 
     switch(filterType) {
