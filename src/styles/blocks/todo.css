@@ -132,6 +132,16 @@
     opacity: 0;
     visibility: hidden;
   }
+
+  &.is-inactive {
+    color: var(--color-gray-1);
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &:hover {
+      color: var(--color-gray-1);
+    }
+  }
 }
 
 .button__toggle-all:not(.is-visible) {
