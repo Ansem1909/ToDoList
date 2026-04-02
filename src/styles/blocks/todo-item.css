@@ -5,7 +5,7 @@
   padding: 10px;
   border: var(--border);
   border-radius: var(--border-radius);
-  transition-duration: var(--transition-duration);
+  transition: border-color var(--transition-duration);
 
   &:hover {
     border-color: var(--color-orange-2);
@@ -14,13 +14,14 @@
   &.is-disappearing {
     opacity: 0;
     translate: 0 -75%;
-    transition-duration: calc(var(--transition-duration) * 2);
+    transition: opacity calc(var(--transition-duration) * 2),
+                translate calc(var(--transition-duration) * 2);
     pointer-events: none;
 
     & ~ .todo-item {
       translate: 0 calc((100% + var(--todoListRowGap)) * -1);
+      transition: translate var(--transition-duration);
       transition-delay: var(--transition-duration);
-      transition-duration: var(--transition-duration);
       pointer-events: none;
     }
   }
@@ -35,7 +36,10 @@
   margin: 0;
   border: 2px solid var(--color-black);
   border-radius: 4px;
-  transition-duration: var(--transition-duration);
+  transition: color var(--transition-duration),
+              background-color var(--transition-duration),
+              border-color var(--transition-duration),
+              opacity var(--transition-duration);
 
   &:hover {
     border-color: var(--color-orange-1);
@@ -106,7 +110,9 @@
   background-color: transparent;
   border: none;
   border-radius: inherit;
-  transition-duration: var(--transition-duration);
+  transition: color var(--transition-duration),
+              background-color var(--transition-duration),
+              scale var(--transition-duration);
 
   &:hover {
     color: var(--color-white);
@@ -154,7 +160,8 @@
     transform: scale(0);
     overflow: hidden;
     pointer-events: none;
-    transition: all var(--transition-duration);
+    transition: opacity var(--transition-duration),
+                transform var(--transition-duration);
   }
 
   .todo-item__label {
@@ -167,12 +174,12 @@
   }
 
   .todo-item__checkbox {
-    pointer-events: none;
     opacity: 0.5;
+    pointer-events: none;
   }
 
   .todo-item__delete-button {
-    pointer-events: none;
     opacity: 0.5;
+    pointer-events: none;
   }
 }
