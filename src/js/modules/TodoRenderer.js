@@ -1,12 +1,12 @@
 import { escapeHtml } from '../utils/escapeHtml.js';
 
 export class TodoRenderer {
-  constructor(listElement, totalTasksElement, deleteButtonElement, checkAllButtonElement, filterButtonsContainer) {
+  constructor(listElement, infoElement, totalTasksElement, deleteButtonElement, checkAllButtonElement) {
     this.listElement = listElement;
+    this.infoElement = infoElement;
     this.totalTasksElement = totalTasksElement;
     this.deleteButtonElement = deleteButtonElement;
     this.checkAllButtonElement = checkAllButtonElement;
-    this.filterButtonsContainer = filterButtonsContainer;
   }
 
   updateUI(items, stateClasses) {
@@ -17,12 +17,11 @@ export class TodoRenderer {
     const hasTasks = items.length > 0;
     const hasCompletedTasks = items.some(item => item.isChecked);
 
-    this.deleteButtonElement.classList.toggle(stateClasses.isVisible, hasCompletedTasks);
-    this.checkAllButtonElement.classList.toggle(stateClasses.isVisible, hasTasks);
+    this.infoElement.classList.toggle(stateClasses.isVisible, hasTasks);
 
-    if (this.filterButtonsContainer) {
-      this.filterButtonsContainer.classList.toggle(stateClasses.isVisible, hasTasks);
-    }
+    this.deleteButtonElement.classList.toggle(stateClasses.isVisible, hasCompletedTasks);
+
+    this.checkAllButtonElement.classList.toggle(stateClasses.isVisible, hasTasks);
   }
 
   generateItemHTML(item, isEditing, stateClasses) {
