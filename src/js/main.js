@@ -9,6 +9,7 @@ class Todo {
     newTaskForm: '[data-js-todo-new-task-form]',
     newTaskInput: '[data-js-todo-new-task-input]',
     checkAllButton: '[data-js-todo-check-all-button]',
+    info: '[data-js-todo-info]',
     totalTasks: '[data-js-todo-total-tasks]',
     filterButtons: '[data-js-todo-filter-buttons]',
     filterButton: '[data-js-todo-filter-button]',
@@ -45,6 +46,7 @@ class Todo {
       newTaskForm: this.rootElement.querySelector(this.selectors.newTaskForm),
       newTaskInput: this.rootElement.querySelector(this.selectors.newTaskInput),
       checkAllButton: this.rootElement.querySelector(this.selectors.checkAllButton),
+      info:this.rootElement.querySelector(this.selectors.info),
       totalTasks: this.rootElement.querySelector(this.selectors.totalTasks),
       deleteButton: this.rootElement.querySelector(this.selectors.deleteButton),
       list: this.rootElement.querySelector(this.selectors.list),
@@ -55,11 +57,13 @@ class Todo {
     const storage = new TodoStorage(this.localStorageKey);
     const renderer = new TodoRenderer(
       this.elements.list,
+      this.elements.info,
       this.elements.totalTasks,
       this.elements.deleteButton,
       this.elements.checkAllButton,
       this.elements.filterButtonsContainer
     );
+
     const state = new TodoState(storage, this.filterTypes);
     const eventHandlers = new TodoEventHandlers(
       state,
