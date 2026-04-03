@@ -45,6 +45,7 @@
       "total delete"
       "filter filter";
     row-gap: 12px;
+    column-gap: 0;
   }
 }
 
@@ -65,7 +66,8 @@
 
   opacity: 0;
   visibility: hidden;
-  transition-duration: var(--transition-duration);
+
+  transition: opacity var(--transition-duration);
 
   &.is-visible {
     opacity: 1;
@@ -75,9 +77,9 @@
   @media(max-width: 767px) {
     grid-area: filter;
     justify-self: stretch;
-    width: 100%;
     display: flex;
     justify-content: center;
+    width: 100%;
   }
 
   @media(max-width: 359px) {
@@ -92,7 +94,9 @@
   background-color: var(--color-white);
   border: 2px solid transparent;
   border-radius: var(--border-radius);
-  transition-duration: var(--transition-duration);
+  transition-duration: color var(--transition-duration),
+                       background-color var(--transition-duration),
+                       border-color var(--transition-duration),;
 
   &:hover {
     color: var(--color-white);
@@ -115,6 +119,7 @@
   color: var(--color-black);
   background-color: transparent;
   border: none;
+  transition: color var(--transition-duration);
 
   @media(max-width: 767px) {
     grid-area: delete;
@@ -136,7 +141,6 @@
 
 .button__toggle-all:not(.is-visible) {
   display: none;
-  transition-duration: var(--transition-duration);
 }
 
 .todo__list {
