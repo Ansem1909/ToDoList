@@ -45,6 +45,7 @@
       "total delete"
       "filter filter";
     row-gap: 12px;
+    column-gap: 0;
   }
 }
 
@@ -76,9 +77,9 @@
   @media(max-width: 767px) {
     grid-area: filter;
     justify-self: stretch;
-    width: 100%;
     display: flex;
     justify-content: center;
+    width: 100%;
   }
 
   @media(max-width: 359px) {
