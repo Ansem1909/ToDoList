@@ -101,15 +101,24 @@ export class TodoEventHandlers {
   }
 
   fullRender() {
-    this.renderer.updateUI(this.state.items, this.stateClasses);
-    this.renderer.renderItems(
+    const displayList = this.state.getDisplayList();
+
+    this.renderer.updateUI(
       this.state.items,
-      this.state.editingItemId,
-      this.state.currentFilter,
-      this.filterTypes,
       this.stateClasses
     );
-    this.renderer.focusEditingItem(this.state.editingItemId, this.elements.list);
+
+    this.renderer.renderItems(
+      displayList,
+      this.state.editingItemId,
+      this.stateClasses
+    );
+
+    this.renderer.focusEditingItem(
+      this.state.editingItemId,
+      this.elements.list
+    );
+
     this.renderer.updateFilterButtons(
       this.elements.filterButtons,
       this.state.currentFilter,

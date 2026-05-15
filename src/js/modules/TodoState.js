@@ -86,6 +86,17 @@ export class TodoState {
     this.notify();
   }
 
+  getDisplayList() {
+    let filtered = this.items;
+    if (this.currentFilter === this.filterTypes.ACTIVE) {
+      filtered = this.items.filter(item => !item.isChecked);
+    } else if (this.currentFilter === this.filterTypes.COMPLETED) {
+      filtered = this.items.filter(item => item.isChecked);
+    }
+
+    return [...filtered].reverse();
+  }
+
   saveItemsToStorage() {
     this.storage.saveItems(this.items);
   }

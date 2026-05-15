@@ -66,17 +66,8 @@ export class TodoRenderer {
     `;
   }
 
-  renderItems(items, editingItemId, filterType, filterTypes, stateClasses) {
-    let filteredItems = items;
-    if (filterType === filterTypes.ACTIVE) {
-      filteredItems = items.filter(item => !item.isChecked);
-    } else if (filterType === filterTypes.COMPLETED) {
-      filteredItems = items.filter(item => item.isChecked);
-    }
-
-    const sortedItems = [...filteredItems].reverse();
-
-    this.listElement.innerHTML = sortedItems.map(item => {
+  renderItems(displayList, editingItemId, stateClasses) {
+    this.listElement.innerHTML = displayList.map(item => {
       const isEditing = editingItemId === item.id;
       return this.generateItemHTML(item, isEditing, stateClasses);
     }).join('');
