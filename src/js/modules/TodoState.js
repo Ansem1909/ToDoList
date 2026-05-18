@@ -13,12 +13,12 @@ export class TodoState {
     if (trimmedTitle === '') return;
 
     this.items = [
-      ...this.items,
       {
         id: crypto?.randomUUID?.() ?? Date.now().toString(),
         title: trimmedTitle,
         isChecked: false,
-      }
+      },
+      ...this.items
     ];
     this.saveAndNotify();
   }
@@ -94,7 +94,7 @@ export class TodoState {
       filtered = this.items.filter(item => item.isChecked);
     }
 
-    return [...filtered].reverse();
+    return filtered;
   }
 
   saveItemsToStorage() {
