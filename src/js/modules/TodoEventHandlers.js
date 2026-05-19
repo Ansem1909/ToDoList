@@ -1,3 +1,5 @@
+const DEFAULT_TRANSITION_DURATION_MS = 400;
+
 export class TodoEventHandlers {
   constructor(state, renderer, elements, selectors, stateClasses, filterTypes) {
     this.state = state;
@@ -25,17 +27,28 @@ export class TodoEventHandlers {
     this.state.clearCompleted();
   }
 
+  getTransitionDurationMs(element) {
+    const style = getComputedStyle(element);
+    const durationStr = style.transitionDuration;
+    const durations = durationStr.split(',').map(
+      s => parseFloat(s)).filter(v => !isNaN(v)
+    );
+    if (durations.length === 0) return DEFAULT_TRANSITION_DURATION_MS;
+    const maxSeconds = Math.max(...durations);
+    return maxSeconds * 1000;
+  }
+
   onClick = ({ target }) => {
     if (target.matches(this.selectors.itemDeleteButton)) {
       const itemElement = target.closest(this.selectors.item);
       if (!itemElement) return;
+      const itemId = itemElement.dataset.itemId;
 
-      const itemCheckboxElement = itemElement.querySelector(this.selectors.itemCheckbox);
       itemElement.classList.add(this.stateClasses.isDisappearing);
-
+      const duration = this.getTransitionDurationMs(itemElement);
       setTimeout(() => {
-        this.state.deleteItem(itemCheckboxElement.id);
-      }, 400);
+        this.state.deleteItem(itemId);
+      }, duration);
     }
   }
 
