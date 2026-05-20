@@ -144,14 +144,14 @@ export class TodoEventHandlers {
   }
 
   bindEvents() {
-    this.elements.newTaskForm.addEventListener('submit', this.onNewTaskFormSubmit);
-    this.elements.checkAllButton.addEventListener('click', this.onCheckAllButtonClick);
-    this.elements.deleteButton.addEventListener('click', this.onDeleteButtonClick);
-    this.elements.list.addEventListener('click', this.onClick);
-    this.elements.list.addEventListener('dblclick', this.onDoubleClick);
-    this.elements.list.addEventListener('change', this.onChange);
-    this.elements.list.addEventListener('blur', this.onBlurBound, true);
-    this.elements.root.addEventListener('click', this.onFilterButtonClick);
-    this.elements.root.addEventListener('keydown', this.onKeyDownBound);
+    this.elements.newTaskForm?.addEventListener('submit', this.onNewTaskFormSubmit);
+    this.elements.checkAllButton?.addEventListener('click', this.onCheckAllButtonClick);
+    this.elements.deleteButton?.addEventListener('click', this.onDeleteButtonClick);
+    this.elements.list?.addEventListener('click', this.onClick);
+    this.elements.list?.addEventListener('dblclick', this.onDoubleClick);
+    this.elements.list?.addEventListener('change', this.onChange);
+    this.elements.list?.addEventListener('blur', this.onBlurBound, true);
+    this.elements.root?.addEventListener('click', this.onFilterButtonClick);
+    this.elements.root?.addEventListener('keydown', this.onKeyDownBound);
   }
 }
