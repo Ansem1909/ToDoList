@@ -93,7 +93,11 @@ export class TodoEventHandlers {
 
   onChange = ({ target }) => {
     if (target.matches(this.selectors.itemCheckbox)) {
-      this.state.toggleCheckedState(target.id);
+      const itemElement = target.closest(this.selectors.item);
+      if (itemElement) {
+        const itemId = itemElement.dataset.itemId;
+        this.state.toggleCheckedState(itemId);
+      }
     }
   }
 
