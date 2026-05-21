@@ -80,15 +80,7 @@ export class TodoEventHandlers {
   onBlur = (event) => {
     if (!this.state.editingItemId) return;
     if (!event.target.matches(this.selectors.itemInput)) return;
-
-    const relatedTarget = event.relatedTarget;
-    const isClickOnFilter = relatedTarget?.matches(this.selectors.filterButton);
-    const isClickOnDelete = relatedTarget?.matches(this.selectors.itemDeleteButton);
-    const isClickOutside = !relatedTarget || !this.elements.root.contains(relatedTarget);
-
-    if (isClickOnFilter || isClickOnDelete || isClickOutside) {
-      this.state.saveEditing(this.state.editingItemId, event.target.value);
-    }
+    this.state.saveEditing(this.state.editingItemId, event.target.value);
   }
 
   onChange = ({ target }) => {
