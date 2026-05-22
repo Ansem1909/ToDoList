@@ -1,5 +1,3 @@
-import { escapeHtml } from '../utils/escapeHtml.js';
-
 export class TodoState {
   constructor(storage, filterTypes) {
     this.storage = storage;
@@ -11,16 +9,16 @@ export class TodoState {
   }
 
   addItem(title) {
-    const escapedTitle = escapeHtml(title.trim());
-    if (escapedTitle === '') return;
+    const trimmedTitle = title.trim();
+    if (trimmedTitle === '') return;
 
     this.items = [
-      ...this.items,
       {
         id: crypto?.randomUUID?.() ?? Date.now().toString(),
-        title: escapedTitle,
+        title: trimmedTitle,
         isChecked: false,
-      }
+      },
+      ...this.items
     ];
     this.saveAndNotify();
   }
@@ -36,14 +34,14 @@ export class TodoState {
   }
 
   saveEditing(id, newTitle) {
-    const escapedTitle = escapeHtml(newTitle.trim());
+    const trimmedTitle = newTitle.trim();
 
-    if (escapedTitle === '') {
+    if (trimmedTitle === '') {
       this.deleteItem(id);
     } else {
       this.items = this.items.map((item) => {
         if (item.id === id) {
-          return { ...item, title: escapedTitle };
+          return { ...item, title: trimmedTitle };
         }
         return item;
       });
@@ -86,6 +84,17 @@ export class TodoState {
   setFilter(filterType) {
     this.currentFilter = filterType;
     this.notify();
+  }
+
+  getDisplayList() {
+    let filtered = this.items;
+    if (this.currentFilter === this.filterTypes.ACTIVE) {
+      filtered = this.items.filter(item => !item.isChecked);
+    } else if (this.currentFilter === this.filterTypes.COMPLETED) {
+      filtered = this.items.filter(item => item.isChecked);
+    }
+
+    return filtered;
   }
 
   saveItemsToStorage() {

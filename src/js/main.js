@@ -61,7 +61,6 @@ class Todo {
       this.elements.totalTasks,
       this.elements.deleteButton,
       this.elements.checkAllButton,
-      this.elements.filterButtonsContainer
     );
 
     const state = new TodoState(storage, this.filterTypes);
